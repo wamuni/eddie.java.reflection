@@ -1,11 +1,14 @@
 package org.example;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+    public static void main(String[] args) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
         int field = User.publicStaticField;
         System.out.println(field);
         User.myPublicStaticMethod();
@@ -45,6 +48,29 @@ public class Main {
         staticField = staticClazz.getDeclaredField("privateStaticField");
         // 在获取似有静态字段时，因为时私有的，所以需要获取权限
         staticField.setAccessible(true);
+        // 可以set 新的值
+        staticField.set(null, 100);
         System.out.println(staticField.get(null));
+
+        Method method = staticClazz.getDeclaredMethod("myPublicStaticMethod");
+        method.invoke(null);
+
+        // 可以根据参数类型来获取对应的方法
+        Method staticMethod = staticClazz.getDeclaredMethod(
+                "myPrivateStaticMethod",
+                String.class
+        );
+        staticMethod.setAccessible(true);
+        staticMethod.invoke(null, "Hello");
+
+        // 利用反射构造一个类的实例
+        // 默认方法没有参数，那么就是一个默认无参构造器
+        Constructor<?> constructor = staticClazz.getDeclaredConstructor();
+        // 因为实在运行时进行的，所以在编译阶段无法确定当前是哪个类，所以可以用obj接受
+        Object obj = constructor.newInstance();
+        // 之后可以来一个类型转换
+        if (obj instanceof User) {
+            User user1 = (User) obj;
+        }
     }
 }

@@ -53,6 +53,6 @@ public class User {
     }
 
     private static void myPrivateStaticMethod(String content) {
-        System.out.println("This is a private static method with parameters.");
+        System.out.println("This is a private static method with parameters." + content);
     }
 }
